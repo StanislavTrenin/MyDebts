@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+.idea/
+frontend/node_modules
+frontend/README.ms
+frontend/package-lock.json
+frontend/package.json
