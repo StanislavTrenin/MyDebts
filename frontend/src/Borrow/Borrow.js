@@ -28,7 +28,7 @@ class Borrow extends Component {
 
     updateSum(value) {
         this.setState({
-            sum: '-'+value,
+            sum: value,
         });
     }
 
@@ -42,6 +42,7 @@ class Borrow extends Component {
             person_id: this.state.person_id,
             sum: this.state.sum,
             description: this.state.description,
+            is_borrow: 1,
         });
 
         this.props.history.push('/');

@@ -42,6 +42,7 @@ class Lend extends Component {
             person_id: this.state.person_id,
             sum: this.state.sum,
             description: this.state.description,
+            is_borrow: 0,
         });
 
         this.props.history.push('/');

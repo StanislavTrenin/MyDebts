@@ -52,15 +52,27 @@ app.get('/:id', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    const {person_id, sum, description} = req.body;
-    const newDebt = [person_id, sum, description];
+    const {person_id, sum, description, is_borrow} = req.body;
+    const newDebt = [person_id, sum, description, is_borrow];
     console.log('Put: ', newDebt);
-    connection.query('INSERT INTO debts (person_id, sum, description) VALUES (?, ? , ?)', newDebt, function (err, rows) {
+    connection.query('INSERT INTO debts (person_id, sum, description, is_borrow) VALUES (?, ?, ?, ?)', newDebt, function (err, rows) {
         if (err) {
             console.log('Error while performing Query.');
         }
     });
     res.status(200).send();
+});
+
+app.post('/close/:id', (req, res) => {
+    const id = req.body.id;
+    console.log('Close: ', id);
+    connection.query('DELETE FROM debts WHERE id = ' + id, function (err, rows) {
+        if (err) {
+            console.log('Error while performing Query.');
+        }
+    });
+    res.status(200).send();
+    //res.redirect('back');
 });
 
 app.post('/answer/:id', (req, res) => {
