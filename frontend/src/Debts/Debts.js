@@ -1,13 +1,21 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import {withRouter} from "react-router-dom";
+
 
 
 class Debts extends Component {
-    constructor(props) {
-        super(props);
+    constructor(props, context) {
+        super(props, context);
+        this.handleClose = this.handleClose.bind(this);
+
 
         this.state = {
+            id: 0,
             questions: null,
+            show: false,
         };
     }
 
@@ -16,7 +24,16 @@ class Debts extends Component {
         this.setState({
             questions,
         });
-        
+
+    }
+
+    handleClose() {
+        this.setState({ show: false });
+    }
+
+    handleShow(id) {
+        this.state.id =id;
+        this.setState({ show: true });
     }
 
     getBgColor(is_borrow) {
@@ -30,13 +47,12 @@ class Debts extends Component {
             disabled: true,
         });
 
-        alert('Let`s close ' + id);
-
         await axios.post('http://192.168.33.10:8081/close', {
             id: id,
         });
 
         this.props.history.push('/');
+        window.location.reload(true);
     }
 
     render() {
@@ -52,10 +68,9 @@ class Debts extends Component {
                                     <div className="card-header"
                                          style={{backgroundColor: this.getBgColor(question.is_borrow)}}>
                                         Person: {question.person_id}
-                                        <button type="button" className="float-lg-right btn btn-dark" onClick={() => {
-                                            this.close(question.id)
-                                        }}>Close
-                                        </button>
+                                        <Button variant="primary" className="float-lg-right" onClick={this.handleShow.bind(this, question.id)}>
+                                            Close
+                                        </Button>
                                     </div>
                                     <div className="card-body"
                                          style={{backgroundColor: this.getBgColor(question.is_borrow)}}>
@@ -66,10 +81,26 @@ class Debts extends Component {
                             </div>
                         ))
                     }
+                    <Modal show={this.state.show} onHide={this.handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Closing debt</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Are you sure want close this debt?</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={this.handleClose}>
+                                No
+                            </Button>
+                            <Button variant="primary" onClick={() => {
+                                this.close(this.state.id)
+                            }}>
+                                Yes
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         )
     }
 }
 
-export default Debts;
+export default withRouter(Debts);

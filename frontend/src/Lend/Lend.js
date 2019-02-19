@@ -46,6 +46,7 @@ class Lend extends Component {
         });
 
         this.props.history.push('/');
+        alert('lol');
     }
 
     render() {
