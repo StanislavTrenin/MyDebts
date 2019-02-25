@@ -63,6 +63,12 @@ app.post('/', (req, res) => {
     res.status(200).send();
 });
 
+app.post('/login', (req, res) => {
+    console.log('user signup');
+    req.session.login = req.body.login;
+    res.end()
+});
+
 app.post('/close/:id', (req, res) => {
     const id = req.body.id;
     console.log('Close: ', id);
