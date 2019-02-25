@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios'
+import {NavLink} from "react-router-dom";
 
 
 export default class Login extends Component {
@@ -92,6 +93,9 @@ export default class Login extends Component {
                                     </Button>
                                 </Col>
                             </Row>
+                            <NavLink to="/signup">
+                                Sign up
+                            </NavLink>
                         </Form>
                     </Col>
                     <Col></Col>
