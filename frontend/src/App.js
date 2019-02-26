@@ -17,7 +17,7 @@ class App extends Component {
             <div>
                 <NavBar/>
                 <Route exact path='/' component={Login}/>
-                {/*<Route exact path='/' component={Debts}/>*/}
+                <Route exact path='/debts' component={Debts}/>
                 <Route exact path='/lend' component={Lend} />
                 <Route exact path='/borrow' component={Borrow} />
                 <Route exact path='/signup' component={Signup} />
