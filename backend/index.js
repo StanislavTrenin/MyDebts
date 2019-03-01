@@ -1,4 +1,4 @@
-//import dependencies
+//import dependencies lol
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,6 +7,8 @@ const morgan = require('morgan');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
 
 const mysql = require('mysql');
 const connection = mysql.createConnection({
@@ -18,24 +20,55 @@ const connection = mysql.createConnection({
 
 const app = express();
 
-const questions = [];
+
 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
-app.use(
-    session({
-        secret: 'fraggle-rock', //pick a random string to make the hash that is generated secure
-        resave: false, //required
-        saveUninitialized: false //required
-    })
-);
-app.use( (req, res, next) => {
-  console.log('req.session', req.session);
-  return next();
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        UserDetails.findOne({
+            username: username
+        }, function(err, user) {
+            if (err) {
+                return done(err);
+            }
+
+            if (!user) {
+                return done(null, false);
+            }
+
+            if (user.password != password) {
+                return done(null, false);
+            }
+            return done(null, user);
+        });
+    }
+));
+
+app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
+app.get('/error', (req, res) => res.send("error logging in"));
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user.id);
 });
 
+passport.deserializeUser(function(id, cb) {
+    User.findById(id, function(err, user) {
+        cb(err, user);
+    });
+});
+
+
+app.post('/',
+    passport.authenticate('local', { failureRedirect: '/error' }),
+    function(req, res) {
+        res.redirect('/success?username='+req.user.username);
+    });
 
 app.get('/', (req, res) => {
     connection.query('SELECT * from debts', function (err, rows, fields) {
@@ -95,7 +128,7 @@ app.post('/login', (req, res) => {
             console.log('Error while performing Query.');
         }
     });
-    req.session.login = req.body.login;
+    //req.session.login = req.body.login;
     res.end()
 });
 
@@ -109,7 +142,7 @@ app.post('/signup', (req, res) => {
             console.log('Error while performing Query.');
         }
     });
-    req.session.login = req.body.login;
+    //req.session.login = req.body.login;
     res.end()
 });
 
@@ -124,20 +157,6 @@ app.post('/close/:id', (req, res) => {
     });
     res.status(200).send();
     //res.redirect('back');
-});
-
-app.post('/answer/:id', (req, res) => {
-    const {answer} = req.body;
-
-    const question = questions.filter(q => (q.id === parseInt(req.params.id)));
-    if (question.length > 1) return res.status(500).send();
-    if (question.length === 0) return res.status(404).send();
-
-    question[0].answers.push({
-        answer,
-    });
-
-    res.status(200).send();
 });
 
 app.listen(8081, () => {

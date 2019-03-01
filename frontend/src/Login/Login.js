@@ -42,7 +42,7 @@ class Login extends Component {
                 console.log(response);
                 if (response.status === 200) {
                     // update App.js state
-                    alert('yes!!!');
+                    //alert('yes!!!');
                     /*this.props.updateUser({
                         loggedIn: true,
                         login: response.data.login
@@ -61,7 +61,7 @@ class Login extends Component {
 
     render() {
         if (this.state.redirectTo) {
-            alert('lol');
+            //alert('lol');
             return <Redirect to={{pathname: this.state.redirectTo}}/>
         } else {
 
